@@ -54,6 +54,7 @@ Resources:
       LaunchTemplateName: !Sub "${AWS::StackName}-launch-template"
       LaunchTemplateData:
         ImageId: !Ref LatestAmiId
+        KeyName: !Ref KeyName
         SourceSecurityGroupIds: 
         - !GetAtt WebSecurityGroup.SecurityGroup
         InstanceType: !Ref InstanceType
