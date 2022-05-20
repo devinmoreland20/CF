@@ -54,6 +54,8 @@ Resources:
       LaunchTemplateName: !Sub "${AWS::StackName}-launch-template"
       LaunchTemplateData:
         ImageId: !Ref LatestAmiId
+        SourceSecurityGroupIds: 
+        - !GetAtt WebSecurityGroup.SecurityGroup
         InstanceType: !Ref InstanceType
         UserData:
           Fn::Base64: |
@@ -125,6 +127,25 @@ Resources:
               - ApplicationLoadBalancer
               - SecurityGroups
       VpcId: !Ref VpcId
+  WebSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Enable SSH access from EC2
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: "22"
+          ToPort: "22"
+          CidrIp: !Ref SSHLocation    
+  WebSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupName: WebSG
+      GroupDescription: Enable SSH access and HTTP from the load balancer only
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: "22"
+          ToPort: "22"
+          CidrIp: !Ref SSHLocation     
   CPUAlarmHigh:
     Type: "AWS::CloudWatch::Alarm"
     Properties:
@@ -174,7 +195,11 @@ Resources:
       AutoScalingGroupName: !Ref WebServerGroup
       Cooldown: "60"
       ScalingAdjustment: "-1"
-
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: myVPC    
 
 Outputs:
   URL:
@@ -186,3 +211,4 @@ Outputs:
           - ApplicationLoadBalancer
           - DNSName
 #CloudFormation can suck a big one.
+
