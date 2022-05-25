@@ -1,0 +1,19 @@
+{
+    "TableName": "Federation",
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "Astronomical Body",
+            "AttributeType": "S"
+        }
+    ],
+    "KeySchema": [
+        {
+            "AttributeName": "Astronomical Body",
+            "KeyType": "HASH"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+    }
+}
