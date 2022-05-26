@@ -1,0 +1,47 @@
+#Policy for EC2 to have read only access to DynamoDB
+
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  DevRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Description: Read Only Access to DynamoDB
+      Policies:
+        - PolicyName: DynamoDBReadOnly
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ListAndDescribe
+                Effect: Allow
+                Action:
+                  - dynamodb:List*
+                  - dynamodb:DescribeReservedCapacity*
+                  - dynamodb:DescribeLimits
+                  - dynamodb:DescribeTimeToLive
+                Resource: arn:aws:dynamodb:*:*:table/Federation
+              - Sid: SpecificTable
+                Effect: Allow
+                Action:
+                  - dynamodb:BatchGet*
+                  - dynamodb:DescribeStream
+                  - dynamodb:DescribeTable
+                  - dynamodb:Get*
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource: arn:aws:dynamodb:*:*:table/Federation
+      RoleName: DynamoBDReadOnly
+  DevInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      InstanceProfileName: DynamoRead
+      Roles:
+        - !Ref DevRole
