@@ -165,5 +165,5 @@ Resources:
     Properties:
       ServiceToken:
         Fn::GetAtt: [InitFunction, "Arn"]
-      DynamoTableName:
+      DynamoTableName: Federation
         Ref: DynamoDB
